@@ -12,8 +12,13 @@
     tools:context="com.example.zjlxw.popularmovies.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <TextView
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        app:srcCompat="@android:color/darker_gray"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/imageView"
+        android:contentDescription=""/>
 </RelativeLayout>
