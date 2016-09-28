@@ -32,10 +32,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) this
-                .findViewById(android.R.id.content)).getChildAt(0);
-        ImageView imageView = (ImageView)viewGroup.findViewById(R.id.imageView);
-        Picasso.with(this).load("http://i.imgur.com/DvpvklR.png").into(imageView);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new ShowcaseFragment())
+                    .commit();
+        }
     }
 
     @Override
