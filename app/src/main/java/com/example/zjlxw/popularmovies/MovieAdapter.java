@@ -16,30 +16,30 @@ import java.util.List;
  * Created by zjlxw on 2016/9/27.
  */
 
-public class ImageAdapter extends BaseAdapter {
+public class MovieAdapter extends BaseAdapter {
     private Context mContext;
 
-    // references to our images
-    private List<String> mImageUrl = new ArrayList<String>();
+    // references to our movies
+    private List<Movie> mMovieList = new ArrayList<Movie>();
 
-    public ImageAdapter(Context c, Movie[] defaultMovies) {
+    public MovieAdapter(Context c, Movie[] defaultMovies) {
         mContext = c;
         update(defaultMovies);
     }
 
     public void update(Movie[] movies) {
-        mImageUrl.clear();
+        mMovieList.clear();
         for (Movie movie : movies) {
-            mImageUrl.add(movie.getImageUrl());
+            mMovieList.add(movie);
         }
     }
 
     public int getCount() {
-        return mImageUrl.size();
+        return mMovieList.size();
     }
 
-    public Object getItem(int position) {
-        return null;
+    public Movie getItem(int position) {
+        return mMovieList.get(position);
     }
 
     public long getItemId(int position) {
@@ -56,7 +56,7 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
         Picasso.with(mContext)
-                .load(mImageUrl.get(position))
+                .load(mMovieList.get(position).getImageUrl())
                 .resize(parent.getWidth()/((GridView)parent).getNumColumns(),0)
                 .into(imageView);
         return imageView;

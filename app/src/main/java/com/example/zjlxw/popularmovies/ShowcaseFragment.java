@@ -10,7 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,23 +29,31 @@ public class ShowcaseFragment extends Fragment {
 
     private final String LOG_TAG = ShowcaseFragment.class.getSimpleName();
 
-    private Movie[] defaultMovies = {new Movie("Picasso", "http://i.imgur.com/DvpvklR.png")};
-
     private GridView mGridView;
-    private ImageAdapter mImageAdapter;
+    private MovieAdapter mMovieAdapter;
     public ShowcaseFragment() {
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Movie[] defaultMovies = {new Movie("Picasso", "http://i.imgur.com/DvpvklR.png")};
+        mMovieAdapter = new MovieAdapter(getActivity(), defaultMovies);
+
         View rootView = inflater.inflate(R.layout.showcase_fragment, container, false);
         mGridView = (GridView)rootView.findViewById(R.id.showcase_gridview);
-        mImageAdapter = new ImageAdapter(getActivity(), defaultMovies);
         mGridView.post(new Runnable() {
             @Override
             public void run() {
-                mGridView.setAdapter(mImageAdapter);
+                mGridView.setAdapter(mMovieAdapter);
+                mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Movie movie = mMovieAdapter.getItem(position);
+                        Toast.makeText(getActivity(), movie.getTitle(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
         return rootView;
@@ -153,9 +163,9 @@ public class ShowcaseFragment extends Fragment {
         @Override
         protected void onPostExecute(Movie[] results) {
             if (results != null) {
-                mImageAdapter.update(results);
+                mMovieAdapter.update(results);
                 Log.d(LOG_TAG, "onPostExecute: adapter updated");
-                mGridView.setAdapter(mImageAdapter);
+                mGridView.setAdapter(mMovieAdapter);
             }
         }
     }
