@@ -1,10 +1,12 @@
 package com.example.zjlxw.popularmovies;
 
+import java.io.Serializable;
+
 /**
  * Created by zjlxw on 2016/9/30.
  */
 
-public class Movie {
+public class Movie implements Serializable{
 
     private String title;
     private String imageUrl;

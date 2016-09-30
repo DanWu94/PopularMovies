@@ -53,7 +53,7 @@ public class ShowcaseFragment extends Fragment {
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Movie movie = mMovieAdapter.getItem(position);
                         Intent intent = new Intent(getActivity(), DetailActivity.class)
-                                .putExtra(Intent.EXTRA_TEXT, movie.getTitle());
+                                .putExtra("movie", movie);
                         startActivity(intent);
                     }
                 });
