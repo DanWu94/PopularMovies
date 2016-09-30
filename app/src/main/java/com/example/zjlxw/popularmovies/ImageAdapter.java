@@ -1,11 +1,9 @@
 package com.example.zjlxw.popularmovies;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -19,16 +17,19 @@ import java.util.List;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    private Resources mResources;
 
     // references to our images
     private List<String> mImageUrl = new ArrayList<String>();
 
-    public ImageAdapter(Context c) {
+    public ImageAdapter(Context c, String[] defaultData) {
         mContext = c;
-        mResources = c.getResources();
-        for (int i = 0; i < 4; i++) {
-            mImageUrl.add(mResources.getString(R.string.test_image_url));
+        update(defaultData);
+    }
+
+    public void update(String[] data) {
+        mImageUrl.clear();
+        for (String url : data) {
+            mImageUrl.add(url);
         }
     }
 
@@ -50,15 +51,12 @@ public class ImageAdapter extends BaseAdapter {
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
-            int width = ((GridView)parent).getWidth()/((GridView)parent).getNumColumns();
-
-            imageView.setLayoutParams(new GridView.LayoutParams(width, width));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(80, 80, 80, 80);
         } else {
             imageView = (ImageView) convertView;
         }
-        Picasso.with(mContext).load(mImageUrl.get(position)).into(imageView);
+        Picasso.with(mContext)
+                .load(mImageUrl.get(position))
+                .into(imageView);
         return imageView;
     }
 

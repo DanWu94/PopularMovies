@@ -8,22 +8,18 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
-
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -31,6 +27,10 @@ public class ShowcaseFragment extends Fragment {
 
     private final String LOG_TAG = ShowcaseFragment.class.getSimpleName();
 
+    private String[] defaultImageList = {"http://i.imgur.com/DvpvklR.png"};
+
+    private GridView mGridView;
+    private ImageAdapter mImageAdapter;
     public ShowcaseFragment() {
     }
 
@@ -38,12 +38,12 @@ public class ShowcaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.showcase_fragment, container, false);
-        final GridView gridView = (GridView)rootView.findViewById(R.id.showcase_gridview);
-        gridView.setNumColumns(2);
-        gridView.post(new Runnable() {
+        mGridView = (GridView)rootView.findViewById(R.id.showcase_gridview);
+        mImageAdapter = new ImageAdapter(getActivity(), defaultImageList);
+        mGridView.post(new Runnable() {
             @Override
             public void run() {
-                gridView.setAdapter(new ImageAdapter(getActivity()));
+                mGridView.setAdapter(mImageAdapter);
             }
         });
         return rootView;
@@ -61,13 +61,21 @@ public class ShowcaseFragment extends Fragment {
         Log.d(LOG_TAG, "updateMovies: execute FetchMovieTask");
     }
 
-    private String[] getMovieDataFromJson(String movieJsonStr)
-        throws JSONException {
-        return null;
-    }
-
     public class FetchMovieTask extends AsyncTask<String, Void, String[]> {
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
+
+        private String[] getMovieDataFromJson(String movieJsonStr)
+                throws JSONException {
+            final String POSTER_URL_PREFIX = "http://image.tmdb.org/t/p/w500";
+            JSONObject movieJson = new JSONObject(movieJsonStr);
+            JSONArray movieArray = movieJson.getJSONArray("results");
+            String[] resultStrs = new String[movieArray.length()];
+            for (int i = 0; i < movieArray.length(); i++) {
+                resultStrs[i] = POSTER_URL_PREFIX + movieArray.getJSONObject(i).getString("poster_path");
+                Log.d(LOG_TAG, "getMovieDataFromJson: "+resultStrs[i]);
+            }
+            return resultStrs;
+        }
 
         @Override
         protected String[] doInBackground(String... params) {
@@ -136,6 +144,15 @@ public class ShowcaseFragment extends Fragment {
             }
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String[] results) {
+            if (results != null) {
+                mImageAdapter.update(results);
+                Log.d(LOG_TAG, "onPostExecute: adapter updated");
+                mGridView.setAdapter(mImageAdapter);
+            }
         }
     }
 }
