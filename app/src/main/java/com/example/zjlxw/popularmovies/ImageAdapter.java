@@ -22,15 +22,15 @@ public class ImageAdapter extends BaseAdapter {
     // references to our images
     private List<String> mImageUrl = new ArrayList<String>();
 
-    public ImageAdapter(Context c, String[] defaultData) {
+    public ImageAdapter(Context c, Movie[] defaultMovies) {
         mContext = c;
-        update(defaultData);
+        update(defaultMovies);
     }
 
-    public void update(String[] data) {
+    public void update(Movie[] movies) {
         mImageUrl.clear();
-        for (String url : data) {
-            mImageUrl.add(url);
+        for (Movie movie : movies) {
+            mImageUrl.add(movie.getImageUrl());
         }
     }
 

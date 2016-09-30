@@ -27,7 +27,7 @@ public class ShowcaseFragment extends Fragment {
 
     private final String LOG_TAG = ShowcaseFragment.class.getSimpleName();
 
-    private String[] defaultImageList = {"http://i.imgur.com/DvpvklR.png"};
+    private Movie[] defaultMovies = {new Movie("Picasso", "http://i.imgur.com/DvpvklR.png")};
 
     private GridView mGridView;
     private ImageAdapter mImageAdapter;
@@ -39,7 +39,7 @@ public class ShowcaseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.showcase_fragment, container, false);
         mGridView = (GridView)rootView.findViewById(R.id.showcase_gridview);
-        mImageAdapter = new ImageAdapter(getActivity(), defaultImageList);
+        mImageAdapter = new ImageAdapter(getActivity(), defaultMovies);
         mGridView.post(new Runnable() {
             @Override
             public void run() {
@@ -61,24 +61,28 @@ public class ShowcaseFragment extends Fragment {
         Log.d(LOG_TAG, "updateMovies: execute FetchMovieTask");
     }
 
-    public class FetchMovieTask extends AsyncTask<String, Void, String[]> {
+    public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
-        private String[] getMovieDataFromJson(String movieJsonStr)
+        private Movie[] getMovieDataFromJson(String movieJsonStr)
                 throws JSONException {
             final String POSTER_URL_PREFIX = "http://image.tmdb.org/t/p/w185";
             JSONObject movieJson = new JSONObject(movieJsonStr);
             JSONArray movieArray = movieJson.getJSONArray("results");
-            String[] resultStrs = new String[movieArray.length()];
+            Movie[] results = new Movie[movieArray.length()];
             for (int i = 0; i < movieArray.length(); i++) {
-                resultStrs[i] = POSTER_URL_PREFIX + movieArray.getJSONObject(i).getString("poster_path");
-                Log.d(LOG_TAG, "getMovieDataFromJson: "+resultStrs[i]);
+                results[i] = new Movie(
+                        movieArray.getJSONObject(i).getString("title"),
+                        POSTER_URL_PREFIX + movieArray.getJSONObject(i).getString("poster_path"));
+                Log.d(LOG_TAG, "getMovieDataFromJson:"
+                        +" title: "+results[i].getTitle()
+                        +" imageUrl: "+results[i].getImageUrl());
             }
-            return resultStrs;
+            return results;
         }
 
         @Override
-        protected String[] doInBackground(String... params) {
+        protected Movie[] doInBackground(String... params) {
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
@@ -147,7 +151,7 @@ public class ShowcaseFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String[] results) {
+        protected void onPostExecute(Movie[] results) {
             if (results != null) {
                 mImageAdapter.update(results);
                 Log.d(LOG_TAG, "onPostExecute: adapter updated");
