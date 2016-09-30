@@ -1,6 +1,7 @@
 package com.example.zjlxw.popularmovies;
 
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,7 +41,7 @@ public class ShowcaseFragment extends Fragment {
         Movie[] defaultMovies = {new Movie("Picasso", "http://i.imgur.com/DvpvklR.png")};
         mMovieAdapter = new MovieAdapter(getActivity(), defaultMovies);
 
-        View rootView = inflater.inflate(R.layout.showcase_fragment, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_showcase, container, false);
         mGridView = (GridView)rootView.findViewById(R.id.showcase_gridview);
         mGridView.post(new Runnable() {
             @Override
@@ -51,7 +52,9 @@ public class ShowcaseFragment extends Fragment {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Movie movie = mMovieAdapter.getItem(position);
-                        Toast.makeText(getActivity(), movie.getTitle(), Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getActivity(), DetailActivity.class)
+                                .putExtra(Intent.EXTRA_TEXT, movie.getTitle());
+                        startActivity(intent);
                     }
                 });
             }
