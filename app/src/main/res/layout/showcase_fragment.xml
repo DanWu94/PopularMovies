@@ -10,13 +10,13 @@
     <GridView
         android:id="@+id/showcase_gridview"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:columnWidth="@dimen/grid_col_width"
+        android:layout_height="fill_parent"
         android:drawSelectorOnTop="true"
         android:gravity="center"
-        android:numColumns="auto_fit"
+        android:numColumns="2"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="5dp"
+        android:verticalSpacing="0dp"
+        android:horizontalSpacing="0dp"
         android:focusable="true"
         android:clickable="true"/>
 

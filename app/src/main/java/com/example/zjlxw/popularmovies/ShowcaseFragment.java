@@ -66,7 +66,7 @@ public class ShowcaseFragment extends Fragment {
 
         private String[] getMovieDataFromJson(String movieJsonStr)
                 throws JSONException {
-            final String POSTER_URL_PREFIX = "http://image.tmdb.org/t/p/w500";
+            final String POSTER_URL_PREFIX = "http://image.tmdb.org/t/p/w185";
             JSONObject movieJson = new JSONObject(movieJsonStr);
             JSONArray movieArray = movieJson.getJSONArray("results");
             String[] resultStrs = new String[movieArray.length()];
