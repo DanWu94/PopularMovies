@@ -1,7 +1,11 @@
 package com.example.zjlxw.popularmovies;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -74,6 +78,13 @@ public class ShowcaseFragment extends Fragment {
         Log.d(LOG_TAG, "updateMovies: execute FetchMovieTask");
     }
 
+    public boolean isOnline() {
+        Activity context = getActivity();
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
+    }
+
     public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
@@ -94,6 +105,8 @@ public class ShowcaseFragment extends Fragment {
             return results;
         }
 
+
+
         @Override
         protected Movie[] doInBackground(String... params) {
 
@@ -101,65 +114,65 @@ public class ShowcaseFragment extends Fragment {
             BufferedReader reader = null;
 
             String movieJsonStr = null;
+            if (isOnline()) {
+                try {
+                    final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
+                    final String API_KEY = "api_key";
+                    Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
+                            .appendQueryParameter(API_KEY, BuildConfig.MOVIEDB_API_KEY)
+                            .build();
 
-            try {
-                final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
-                final String API_KEY = "api_key";
-                Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                        .appendQueryParameter(API_KEY, BuildConfig.MOVIEDB_API_KEY)
-                        .build();
+                    URL url = new URL(builtUri.toString());
 
-                URL url = new URL(builtUri.toString());
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.connect();
 
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
+                    InputStream inputStream = urlConnection.getInputStream();
+                    StringBuffer buffer = new StringBuffer();
+                    if (inputStream == null) {
+                        return null;
+                    }
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
 
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                        // But it does make debugging a *lot* easier if you print out the completed
+                        // buffer for debugging.
+                        buffer.append(line + "\n");
+                    }
+                    Log.d(LOG_TAG, "JSON: \n" + buffer);
 
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-                Log.d(LOG_TAG, "JSON: \n"+buffer);
+                    if (buffer.length() == 0) {
+                        // Stream was empty.  No point in parsing.
+                        return null;
+                    }
 
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
+                    movieJsonStr = buffer.toString();
 
-                movieJsonStr = buffer.toString();
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "IO Error: ", e);
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream: ", e);
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "IO Error: ", e);
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (final IOException e) {
+                            Log.e(LOG_TAG, "Error closing stream: ", e);
+                        }
                     }
                 }
-            }
 
-            try {
-                return getMovieDataFromJson(movieJsonStr);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
+                try {
+                    return getMovieDataFromJson(movieJsonStr);
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, e.getMessage(), e);
+                    e.printStackTrace();
+                }
             }
-
             return null;
         }
 
