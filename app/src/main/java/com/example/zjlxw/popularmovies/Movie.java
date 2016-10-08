@@ -10,10 +10,12 @@ public class Movie implements Serializable{
 
     private String title;
     private String imageUrl;
+    private String vote;
 
-    public Movie(String title, String imageUrl) {
+    public Movie(String title, String imageUrl, String vote) {
         setTitle(title);
         setImageUrl(imageUrl);
+        setVote(vote);
     }
 
     public String getTitle() {
@@ -30,5 +32,13 @@ public class Movie implements Serializable{
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getVote() {
+        return vote;
+    }
+
+    public void setVote(String vote) {
+        this.vote = vote;
     }
 }

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -29,15 +30,21 @@ public class DetailFragment extends Fragment {
 
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra("movie")) {
-            Movie movie = (Movie)intent.getSerializableExtra("movie");
-            ((TextView)rootView.findViewById(R.id.title_text))
+            final Movie movie = (Movie)intent.getSerializableExtra("movie");
+            ((TextView)rootView.findViewById(R.id.text_title))
                     .setText(movie.getTitle());
-            Log.d(LOG_TAG, "onCreateView: title: "+movie.getTitle());
-            Log.d(LOG_TAG, "onCreateView: imageUrl: "+movie.getImageUrl());
-            Picasso.with(getActivity())
-                    .load(movie.getImageUrl())
-                    .into((ImageView)rootView.findViewById(R.id.poster_image));
-
+            final ImageView imageView = (ImageView)rootView.findViewById(R.id.image_poster);
+            imageView.post(new Runnable() {
+                @Override
+                public void run() {
+                    Picasso.with(getActivity())
+                            .load(movie.getImageUrl())
+                            .resize(((View)imageView.getParent()).getMeasuredWidth(),0)
+                            .into(imageView);
+                }
+            });
+            ((TextView)rootView.findViewById(R.id.text_vote))
+                    .setText(movie.getVote()+"/10");
         }
         return rootView;
     }
