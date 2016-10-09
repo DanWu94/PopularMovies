@@ -10,11 +10,24 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Spinner spinner;
+    public enum SortBy {
+        MOST_POPULAR,
+        TOP_RATED
+    }
+    private SortBy sortBy = SortBy.TOP_RATED;
+    public SortBy getSortBy() {
+        return sortBy;
+    }
+    private ShowcaseFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,11 +36,40 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        addListenerOnSpinnerItemSelection();
+
         if (savedInstanceState == null) {
+            fragment = new ShowcaseFragment();
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ShowcaseFragment())
+                    .add(R.id.container, fragment)
                     .commit();
         }
+    }
+
+    public void addListenerOnSpinnerItemSelection() {
+        spinner = (Spinner) findViewById(R.id.sort_by);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        sortBy = SortBy.MOST_POPULAR;
+                        break;
+                    case 1:
+                        sortBy = SortBy.TOP_RATED;
+                        break;
+                    default:
+                        sortBy = SortBy.MOST_POPULAR;
+                        break;
+                }
+                fragment.updateMovies();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     @Override

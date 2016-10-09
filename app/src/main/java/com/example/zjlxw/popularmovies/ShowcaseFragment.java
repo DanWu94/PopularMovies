@@ -36,15 +36,12 @@ public class ShowcaseFragment extends Fragment {
 
     private GridView mGridView;
     private MovieAdapter mMovieAdapter;
-    public ShowcaseFragment() {
-    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Movie[] defaultMovies = {new Movie("Oops...There's something wrong with your Internet connection.", "http://i.imgur.com/DvpvklR.png", "0", "1970-1-1", "A little tip: check your WIFI or cellular data.")};
         mMovieAdapter = new MovieAdapter(getActivity(), defaultMovies);
-
         View rootView = inflater.inflate(R.layout.fragment_showcase, container, false);
         mGridView = (GridView)rootView.findViewById(R.id.showcase_gridview);
         mGridView.post(new Runnable() {
@@ -72,7 +69,7 @@ public class ShowcaseFragment extends Fragment {
         updateMovies();
     }
 
-    private void updateMovies() {
+    public void updateMovies() {
         FetchMovieTask movieTask = new FetchMovieTask();
         movieTask.execute();
         Log.d(LOG_TAG, "updateMovies: execute FetchMovieTask");
@@ -120,7 +117,18 @@ public class ShowcaseFragment extends Fragment {
             String movieJsonStr = null;
             if (isOnline()) {
                 try {
-                    final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
+                    Log.d(LOG_TAG, "doInBackground: sortby = "+((MainActivity)getActivity()).getSortBy());
+                    String MOVIE_BASE_URL;
+                    switch (((MainActivity)getActivity()).getSortBy()) {
+                        case MOST_POPULAR:
+                            MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
+                            break;
+                        case TOP_RATED:
+                            MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/top_rated?";
+                            break;
+                        default:
+                            MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
+                    }
                     final String API_KEY = "api_key";
                     Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                             .appendQueryParameter(API_KEY, BuildConfig.MOVIEDB_API_KEY)
@@ -133,7 +141,7 @@ public class ShowcaseFragment extends Fragment {
                     urlConnection.connect();
 
                     InputStream inputStream = urlConnection.getInputStream();
-                    StringBuffer buffer = new StringBuffer();
+                    StringBuilder buffer = new StringBuilder();
                     if (inputStream == null) {
                         return null;
                     }
@@ -144,7 +152,8 @@ public class ShowcaseFragment extends Fragment {
                         // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
                         // But it does make debugging a *lot* easier if you print out the completed
                         // buffer for debugging.
-                        buffer.append(line + "\n");
+                        buffer.append(line);
+                        buffer.append("\n");
                     }
                     Log.d(LOG_TAG, "JSON: \n" + buffer);
 
