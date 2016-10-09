@@ -1,12 +1,15 @@
 package com.example.zjlxw.popularmovies;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 /**
  * Created by zjlxw on 2016/9/30.
  */
 
-public class Movie implements Serializable{
+public class Movie implements Parcelable{
 
     private String title;
     private String imageUrl;
@@ -61,4 +64,41 @@ public class Movie implements Serializable{
     public void setOverview(String overview) {
         this.overview = overview;
     }
+
+    //Parcelling part
+    public Movie(Parcel in) {
+        String[] data = new String[5];//remember to modify this when adding new fields
+        in.readStringArray(data);
+        setTitle(data[0]);
+        setImageUrl(data[1]);
+        setVote(data[2]);
+        setReleaseDate(data[3]);
+        setOverview(data[4]);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeStringArray(new String[] {
+                getTitle(),
+                getImageUrl(),
+                getVote(),
+                getReleaseDate(),
+                getOverview()
+        });
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 }

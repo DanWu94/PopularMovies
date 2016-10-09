@@ -30,7 +30,8 @@ public class DetailFragment extends Fragment {
 
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra("movie")) {
-            final Movie movie = (Movie)intent.getSerializableExtra("movie");
+            Bundle data = intent.getExtras();
+            final Movie movie = data.getParcelable("movie");
             ((TextView)rootView.findViewById(R.id.text_title))
                     .setText(movie.getTitle());
             final ImageView imageView = (ImageView)rootView.findViewById(R.id.image_poster);
