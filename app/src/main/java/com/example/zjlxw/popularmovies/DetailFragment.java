@@ -41,6 +41,8 @@ public class DetailFragment extends Fragment {
                     Log.d(LOG_TAG, "run: "+((View)imageView.getParent()).getMeasuredWidth());
                     Picasso.with(getActivity())
                             .load(movie.getImageUrl())
+                            .placeholder(R.drawable.placeholder)
+                            .error(R.drawable.placeholder_error)
                             .resize(((View)imageView.getParent()).getMeasuredWidth(),0)
                             .into(imageView);
                 }
