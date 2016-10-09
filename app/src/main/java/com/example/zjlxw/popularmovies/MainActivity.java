@@ -51,18 +51,24 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SortBy tempSortBy;
                 switch (position) {
                     case 0:
-                        sortBy = SortBy.MOST_POPULAR;
+                        tempSortBy = SortBy.MOST_POPULAR;
                         break;
                     case 1:
-                        sortBy = SortBy.TOP_RATED;
+                        tempSortBy = SortBy.TOP_RATED;
                         break;
                     default:
-                        sortBy = SortBy.MOST_POPULAR;
+                        tempSortBy = SortBy.MOST_POPULAR;
                         break;
                 }
-                fragment.updateMovies();
+                if (tempSortBy != sortBy){
+                    sortBy = tempSortBy;
+                    if(fragment != null) {
+                        fragment.updateMovies();
+                    }
+                }
             }
 
             @Override
