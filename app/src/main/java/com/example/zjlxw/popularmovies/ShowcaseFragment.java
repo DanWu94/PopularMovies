@@ -2,6 +2,7 @@ package com.example.zjlxw.popularmovies;
 
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -11,6 +12,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +58,13 @@ public class ShowcaseFragment extends Fragment {
                         Movie movie = mMovieAdapter.getItem(position);
                         Intent intent = new Intent(getActivity(), DetailActivity.class)
                                 .putExtra("movie", movie);
+                        PendingIntent pendingIntent =
+                                TaskStackBuilder.create(getActivity())
+                                        .addNextIntentWithParentStack(getActivity().getIntent())
+                                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity());
+                        builder.setContentIntent(pendingIntent);
                         startActivity(intent);
                     }
                 });
