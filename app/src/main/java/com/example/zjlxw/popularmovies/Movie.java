@@ -11,11 +11,15 @@ public class Movie implements Serializable{
     private String title;
     private String imageUrl;
     private String vote;
+    private String releaseDate;
+    private String overview;
 
-    public Movie(String title, String imageUrl, String vote) {
+    public Movie(String title, String imageUrl, String vote, String releaseDate, String overview) {
         setTitle(title);
         setImageUrl(imageUrl);
         setVote(vote);
+        setReleaseDate(releaseDate);
+        setOverview(overview);
     }
 
     public String getTitle() {
@@ -40,5 +44,21 @@ public class Movie implements Serializable{
 
     public void setVote(String vote) {
         this.vote = vote;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
     }
 }

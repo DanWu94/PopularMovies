@@ -5,6 +5,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="grid_col_width">150dp</dimen>
     <dimen name="detail_content_padding">10dp</dimen>
-    <dimen name="detail_title_size">30dp</dimen>
-    <dimen name="detail_vote_size">20dp</dimen>
+    <dimen name="detail_title_size">30sp</dimen>
+    <dimen name="detail_release_date_size">25sp</dimen>
+    <dimen name="detail_vote_size">20sp</dimen>
 </resources>

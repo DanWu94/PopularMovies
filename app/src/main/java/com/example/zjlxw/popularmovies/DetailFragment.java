@@ -37,6 +37,7 @@ public class DetailFragment extends Fragment {
             imageView.post(new Runnable() {
                 @Override
                 public void run() {
+                    Log.d(LOG_TAG, "run: "+((View)imageView.getParent()).getMeasuredWidth());
                     Picasso.with(getActivity())
                             .load(movie.getImageUrl())
                             .resize(((View)imageView.getParent()).getMeasuredWidth(),0)
@@ -45,6 +46,10 @@ public class DetailFragment extends Fragment {
             });
             ((TextView)rootView.findViewById(R.id.text_vote))
                     .setText(movie.getVote()+"/10");
+            ((TextView)rootView.findViewById(R.id.text_release_date))
+                    .setText(movie.getReleaseDate());
+            ((TextView)rootView.findViewById(R.id.text_overview))
+                    .setText(movie.getOverview());
         }
         return rootView;
     }

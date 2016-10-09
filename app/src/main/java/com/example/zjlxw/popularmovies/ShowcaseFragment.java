@@ -42,7 +42,7 @@ public class ShowcaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Movie[] defaultMovies = {new Movie("Picasso", "http://i.imgur.com/DvpvklR.png", "0")};
+        Movie[] defaultMovies = {new Movie("Oops...There's something wrong with your Internet connection.", "http://i.imgur.com/DvpvklR.png", "0", "1970-1-1", "A little tip: check your WIFI or cellular data.")};
         mMovieAdapter = new MovieAdapter(getActivity(), defaultMovies);
 
         View rootView = inflater.inflate(R.layout.fragment_showcase, container, false);
@@ -99,7 +99,9 @@ public class ShowcaseFragment extends Fragment {
                 results[i] = new Movie(
                         movieObject.getString("title"),
                         POSTER_URL_PREFIX + movieObject.getString("poster_path"),
-                        movieObject.getString("vote_average"));
+                        movieObject.getString("vote_average"),
+                        movieObject.getString("release_date"),
+                        movieObject.getString("overview"));
                 Log.d(LOG_TAG, "getMovieDataFromJson:"
                         +" title: "+results[i].getTitle()
                         +" imageUrl: "+results[i].getImageUrl());
