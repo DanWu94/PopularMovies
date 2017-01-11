@@ -11,18 +11,30 @@ import java.io.Serializable;
 
 public class Movie implements Parcelable{
 
+    private String id;
     private String title;
     private String imageUrl;
     private String vote;
     private String releaseDate;
     private String overview;
 
-    public Movie(String title, String imageUrl, String vote, String releaseDate, String overview) {
+
+
+    public Movie(String id, String title, String imageUrl, String vote, String releaseDate, String overview) {
+        setId(id);
         setTitle(title);
         setImageUrl(imageUrl);
         setVote(vote);
         setReleaseDate(releaseDate);
         setOverview(overview);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -67,13 +79,14 @@ public class Movie implements Parcelable{
 
     //Parcelling part
     public Movie(Parcel in) {
-        String[] data = new String[5];//remember to modify this when adding new fields
+        String[] data = new String[6];//remember to modify this when adding new fields
         in.readStringArray(data);
-        setTitle(data[0]);
-        setImageUrl(data[1]);
-        setVote(data[2]);
-        setReleaseDate(data[3]);
-        setOverview(data[4]);
+        setId(data[0]);
+        setTitle(data[1]);
+        setImageUrl(data[2]);
+        setVote(data[3]);
+        setReleaseDate(data[4]);
+        setOverview(data[5]);
     }
 
     @Override
@@ -84,6 +97,7 @@ public class Movie implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeStringArray(new String[] {
+                getId(),
                 getTitle(),
                 getImageUrl(),
                 getVote(),

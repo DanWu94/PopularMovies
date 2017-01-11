@@ -43,7 +43,7 @@ public class ShowcaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Movie[] defaultMovies = {new Movie("Oops...There's something wrong with your Internet connection.", "http://i.imgur.com/DvpvklR.png", "0", "1970-1-1", "A little tip: check your WIFI or cellular data.")};
+        Movie[] defaultMovies = {new Movie("0", "Oops...There's something wrong with your Internet connection.", "http://i.imgur.com/DvpvklR.png", "0", "1970-1-1", "A little tip: check your WIFI or cellular data.")};
         mMovieAdapter = new MovieAdapter(getActivity(), defaultMovies);
         View rootView = inflater.inflate(R.layout.fragment_showcase, container, false);
         mGridView = (GridView)rootView.findViewById(R.id.showcase_gridview);
@@ -104,6 +104,7 @@ public class ShowcaseFragment extends Fragment {
             for (int i = 0; i < movieArray.length(); i++) {
                 JSONObject movieObject = movieArray.getJSONObject(i);
                 results[i] = new Movie(
+                        movieObject.getString("id"),
                         movieObject.getString("title"),
                         POSTER_URL_PREFIX + movieObject.getString("poster_path"),
                         movieObject.getString("vote_average"),
