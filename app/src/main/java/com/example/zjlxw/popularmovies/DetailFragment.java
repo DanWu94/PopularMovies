@@ -42,6 +42,8 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
 
     private String mId;
 
+    private String[] mTrailerKeys;
+
     public DetailFragment() {
     }
 
@@ -78,14 +80,20 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                     .setText(movie.getReleaseDate());
             ((TextView)rootView.findViewById(R.id.text_overview))
                     .setText(movie.getOverview());
+            getTrailerKeys();
         }
         return rootView;
     }
 
-    public void onTrailerClicked(View view) {
+    private void getTrailerKeys() {
         Log.d(LOG_TAG, "onTrailorClicked: " + mId);
         FetchTrailerTask fetchTrailerTask = new FetchTrailerTask();
         fetchTrailerTask.execute();
+    }
+
+    public void onTrailerClicked(int i) {
+        Log.d(LOG_TAG, "onTrailorClicked: " + i);
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + mTrailerKeys[i])));
     }
 
     public boolean isOnline() {
@@ -183,8 +191,8 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
         @Override
         protected void onPostExecute(String[] result) {
             if (result != null) {
-                Log.d(LOG_TAG, "onPostExecute: start trailer");
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + result[0])));
+                Log.d(LOG_TAG, "onPostExecute: store trailer keys");
+                mTrailerKeys = result;
             }
         }
     }
@@ -193,7 +201,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_trailer:
-                onTrailerClicked(v);
+                onTrailerClicked(0);
                 break;
         }
 
