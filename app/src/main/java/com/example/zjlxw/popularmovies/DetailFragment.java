@@ -31,6 +31,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -94,23 +95,27 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 
-    public class FetchTrailerTask extends AsyncTask<String, Void, String> {
+    public class FetchTrailerTask extends AsyncTask<String, Void, String[]> {
         private final String LOG_TAG = FetchTrailerTask.class.getSimpleName();
 
-        private String getTrailerFromJson(String movieJsonStr)
+        private String[] getTrailerFromJson(String movieJsonStr)
                 throws JSONException {
             JSONObject movieJson = new JSONObject(movieJsonStr);
             JSONArray movieArray = movieJson.getJSONArray("results");
-            JSONObject movieObject = movieArray.getJSONObject(0);
-            String key = movieObject.getString("key");
-            Log.d(LOG_TAG, "getTrailerFromJson: get trailer key" + key);
-            return key;
+            int trailer_num = movieArray.length();
+            String[] keys = new String[trailer_num];
+            for (int i = 0; i < trailer_num; i++) {
+                JSONObject movieObject = movieArray.getJSONObject(i);
+                keys[i] = movieObject.getString("key");
+            }
+            Log.d(LOG_TAG, "getTrailerFromJson: get trailer keys" + keys);
+            return keys;
         }
 
 
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String[] doInBackground(String... params) {
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
@@ -176,10 +181,10 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String[] result) {
             if (result != null) {
                 Log.d(LOG_TAG, "onPostExecute: start trailer");
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + result)));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + result[0])));
             }
         }
     }
