@@ -85,7 +85,7 @@ public class DetailFragment extends Fragment {
                     .setText(movie.getOverview());
 
             mTrailerList = (ListView)rootView.findViewById(R.id.list_trailers);
-            mTrailerAdapter = new ArrayAdapter<String>(this.getActivity(), R.layout.item_trailer) {
+            mTrailerAdapter = new ArrayAdapter<String>(getActivity(), R.layout.item_trailer) {
                 @NonNull
                 @Override
                 public View getView(final int position, View convertView, ViewGroup parent) {
@@ -118,13 +118,6 @@ public class DetailFragment extends Fragment {
         fetchTrailerTask.execute();
     }
 
-    public boolean isOnline() {
-        Activity context = getActivity();
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnectedOrConnecting();
-    }
-
     public class FetchTrailerTask extends AsyncTask<String, Void, String[]> {
         private final String LOG_TAG = FetchTrailerTask.class.getSimpleName();
 
@@ -151,7 +144,7 @@ public class DetailFragment extends Fragment {
             BufferedReader reader = null;
 
             String movieJsonStr = null;
-            if (isOnline()) {
+            if (Utility.isOnline(getActivity())) {
                 try {
                     String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/" + mId + "/videos";
                     final String API_KEY = "api_key";

@@ -85,13 +85,6 @@ public class ShowcaseFragment extends Fragment {
         Log.d(LOG_TAG, "updateMovies: execute FetchMovieTask");
     }
 
-    public boolean isOnline() {
-        Activity context = getActivity();
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnectedOrConnecting();
-    }
-
     public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
@@ -126,7 +119,7 @@ public class ShowcaseFragment extends Fragment {
             BufferedReader reader = null;
 
             String movieJsonStr = null;
-            if (isOnline()) {
+            if (Utility.isOnline(getActivity())) {
                 try {
                     Log.d(LOG_TAG, "doInBackground: sortby = "+((MainActivity)getActivity()).getSortBy());
                     String MOVIE_BASE_URL;
