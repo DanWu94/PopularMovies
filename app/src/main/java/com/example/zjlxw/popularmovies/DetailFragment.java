@@ -49,13 +49,17 @@ public class DetailFragment extends Fragment {
 
     private ArrayAdapter<String> mTrailerAdapter;
 
+    private ListView mReviewList;
+
+    private ArrayAdapter<Review> mReviewAdapter;
+
     public DetailFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         Intent intent = getActivity().getIntent();
         if (intent != null && intent.hasExtra("movie")) {
@@ -106,6 +110,27 @@ public class DetailFragment extends Fragment {
             };
             mTrailerList.setAdapter(mTrailerAdapter);
             getTrailerKeys();
+
+            mReviewList = (ListView)rootView.findViewById(R.id.list_reviews);
+            mReviewAdapter = new ArrayAdapter<Review>(getActivity(), R.layout.item_review) {
+                @NonNull
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    if (convertView == null) {
+                        convertView = LayoutInflater.from(getContext())
+                                .inflate(R.layout.item_review, parent, false);
+                    }
+                    TextView tvAuthor = (TextView)convertView.findViewById(R.id.tvAuthor);
+                    tvAuthor.setText("Review By: " + getItem(position).author);
+                    TextView tvContent = (TextView)convertView.findViewById(R.id.tvContent);
+                    tvContent.setText(getItem(position).content);
+
+                    return convertView;
+                }
+            };
+            mReviewList.setAdapter(mReviewAdapter);
+            getReviews();
+
             ScrollView scrollView = (ScrollView) rootView.findViewById(R.id.scroll_group);
             scrollView.smoothScrollTo(0, 0);
         }
@@ -113,9 +138,13 @@ public class DetailFragment extends Fragment {
     }
 
     private void getTrailerKeys() {
-        Log.d(LOG_TAG, "onTrailorClicked: " + mId);
         FetchTrailerTask fetchTrailerTask = new FetchTrailerTask();
         fetchTrailerTask.execute();
+    }
+
+    private void getReviews() {
+        FetchReviewTask fetchReviewTask = new FetchReviewTask();
+        fetchReviewTask.execute();
     }
 
     public class FetchTrailerTask extends AsyncTask<String, Void, String[]> {
@@ -134,8 +163,6 @@ public class DetailFragment extends Fragment {
             }
             return keys;
         }
-
-
 
         @Override
         protected String[] doInBackground(String... params) {
@@ -210,6 +237,100 @@ public class DetailFragment extends Fragment {
                 mTrailerAdapter.clear();
                 mTrailerAdapter.addAll(result);
                 Utility.setListViewHeightBasedOnChildren(mTrailerList);
+            }
+        }
+    }
+
+    public class FetchReviewTask extends AsyncTask<String, Void, Review[]> {
+        private final String LOG_TAG = FetchReviewTask.class.getSimpleName();
+
+        private Review[] getTrailerFromJson(String movieJsonStr)
+                throws JSONException {
+            JSONObject movieJson = new JSONObject(movieJsonStr);
+            JSONArray movieArray = movieJson.getJSONArray("results");
+            int trailer_num = movieArray.length();
+            Review[] reviews = new Review[trailer_num];
+            for (int i = 0; i < trailer_num; i++) {
+                JSONObject movieObject = movieArray.getJSONObject(i);
+                reviews[i] = new Review(movieObject.getString("author"), movieObject.getString("content"));
+                Log.d(LOG_TAG, "getTrailerFromJson: author: " + reviews[i].author);
+            }
+            return reviews;
+        }
+
+        @Override
+        protected Review[] doInBackground(String... params) {
+
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            String movieJsonStr = null;
+            if (Utility.isOnline(getActivity())) {
+                try {
+                    String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/" + mId + "/reviews";
+                    final String API_KEY = "api_key";
+                    Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
+                            .appendQueryParameter(API_KEY, BuildConfig.MOVIEDB_API_KEY)
+                            .build();
+
+                    URL url = new URL(builtUri.toString());
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.connect();
+
+                    InputStream inputStream = urlConnection.getInputStream();
+                    StringBuilder buffer = new StringBuilder();
+                    if (inputStream == null) {
+                        return null;
+                    }
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        buffer.append(line);
+                        buffer.append("\n");
+                    }
+                    Log.d(LOG_TAG, "JSON: \n" + buffer);
+
+                    if (buffer.length() == 0) {
+                        return null;
+                    }
+
+                    movieJsonStr = buffer.toString();
+
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "IO Error: ", e);
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (final IOException e) {
+                            Log.e(LOG_TAG, "Error closing stream: ", e);
+                        }
+                    }
+                }
+
+                try {
+                    return getTrailerFromJson(movieJsonStr);
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, e.getMessage(), e);
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Review[] result) {
+            if (result != null) {
+                Log.d(LOG_TAG, "onPostExecute: store reviews");
+                mReviewAdapter.clear();
+                mReviewAdapter.addAll(result);
+                Utility.setListViewHeightBasedOnChildren(mReviewList);
             }
         }
     }
