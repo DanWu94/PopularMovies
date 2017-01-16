@@ -10,7 +10,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/scroll_group">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -68,11 +69,10 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/detail_content_padding"/>
 
-            <Button
-                android:text="Watch Trailer"
+            <ListView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/button_trailer"/>
+                android:layout_height="match_parent"
+                android:id="@+id/list_trailers" />
 
         </LinearLayout>
 
