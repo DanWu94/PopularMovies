@@ -26,6 +26,11 @@
             android:label="@string/title_activity_detail"
             android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".MainActivity"/>
+        <provider
+            android:authorities="com.example.zjlxw.popularmovies.app"
+            android:name=".data.MovieProvider"
+            android:exported="false"
+            android:syncable="true" />
     </application>
 
 </manifest>
