@@ -8,5 +8,6 @@
     <string-array name="sort_methods">
         <item>Most Popular</item>
         <item>Top Rated</item>
+        <item>Favorite</item>
     </string-array>
 </resources>

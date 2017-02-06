@@ -21,7 +21,8 @@ public class MainActivity extends AppCompatActivity {
     private Spinner spinner;
     public enum SortBy {
         MOST_POPULAR,
-        TOP_RATED
+        TOP_RATED,
+        FAVORITE
     }
     private SortBy sortBy = SortBy.TOP_RATED;
     public SortBy getSortBy() {
@@ -58,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 1:
                         tempSortBy = SortBy.TOP_RATED;
+                        break;
+                    case 2:
+                        tempSortBy = SortBy.FAVORITE;
                         break;
                     default:
                         tempSortBy = SortBy.MOST_POPULAR;
