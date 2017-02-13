@@ -212,7 +212,7 @@ public class DetailFragment extends Fragment {
             String[] keys = new String[trailer_num];
             for (int i = 0; i < trailer_num; i++) {
                 JSONObject movieObject = movieArray.getJSONObject(i);
-//                keys[i] = movieObject.getString("key");
+                keys[i] = movieObject.getString("key");
             }
             return keys;
         }
