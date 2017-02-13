@@ -22,7 +22,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final String SQL_CREATE_TABLE_FAVORITES_TABLE = "CREATE TABLE" + FavoritesEntry.TABLE_NAME + " (" +
+        final String SQL_CREATE_TABLE_FAVORITES_TABLE = "CREATE TABLE " + FavoritesEntry.TABLE_NAME + " (" +
                 FavoritesEntry._ID + " INTEGER PRIMARY KEY," +
                 FavoritesEntry.COLUMN_ID + " TEXT UNIQUE NOT NULL, " +
                 FavoritesEntry.COLUMN_TITLE + " TEXT NOT NULL, " +

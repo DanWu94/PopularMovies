@@ -82,7 +82,7 @@ public class ShowcaseFragment extends Fragment {
     public void updateMovies() {
         FetchMovieTask movieTask = new FetchMovieTask();
         movieTask.execute();
-        Log.d(LOG_TAG, "updateMovies: execute FetchMovieTask");
+//        Log.d(LOG_TAG, "updateMovies: execute FetchMovieTask");
     }
 
     public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
@@ -103,9 +103,9 @@ public class ShowcaseFragment extends Fragment {
                         movieObject.getString("vote_average"),
                         movieObject.getString("release_date"),
                         movieObject.getString("overview"));
-                Log.d(LOG_TAG, "getMovieDataFromJson:"
-                        +" title: "+results[i].getTitle()
-                        +" imageUrl: "+results[i].getImageUrl());
+//                Log.d(LOG_TAG, "getMovieDataFromJson:"
+//                        +" title: "+results[i].getTitle()
+//                        +" imageUrl: "+results[i].getImageUrl());
             }
             return results;
         }
@@ -121,7 +121,7 @@ public class ShowcaseFragment extends Fragment {
             String movieJsonStr = null;
             if (Utility.isOnline(getActivity())) {
                 try {
-                    Log.d(LOG_TAG, "doInBackground: sortby = "+((MainActivity)getActivity()).getSortBy());
+//                    Log.d(LOG_TAG, "doInBackground: sortby = "+((MainActivity)getActivity()).getSortBy());
                     String MOVIE_BASE_URL;
                     switch (((MainActivity)getActivity()).getSortBy()) {
                         case MOST_POPULAR:
@@ -159,7 +159,7 @@ public class ShowcaseFragment extends Fragment {
                         buffer.append(line);
                         buffer.append("\n");
                     }
-                    Log.d(LOG_TAG, "JSON: \n" + buffer);
+//                    Log.d(LOG_TAG, "JSON: \n" + buffer);
 
                     if (buffer.length() == 0) {
                         // Stream was empty.  No point in parsing.
@@ -197,7 +197,7 @@ public class ShowcaseFragment extends Fragment {
         protected void onPostExecute(Movie[] results) {
             if (results != null) {
                 mMovieAdapter.update(results);
-                Log.d(LOG_TAG, "onPostExecute: adapter updated");
+//                Log.d(LOG_TAG, "onPostExecute: adapter updated");
                 mGridView.setAdapter(mMovieAdapter);
             }
         }

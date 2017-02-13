@@ -47,18 +47,27 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/text_release_date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/detail_content_padding"
                         android:textSize="@dimen/detail_release_date_size"/>
+
                     <TextView
                         android:id="@+id/text_vote"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/detail_content_padding"
                         android:textSize="@dimen/detail_vote_size"/>
+
+                    <Switch
+                        android:text="Favorite"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/switch_favorite"
+                        android:padding="@dimen/detail_content_padding"/>
 
                 </LinearLayout>
             </LinearLayout>
