@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -22,6 +23,8 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.example.zjlxw.popularmovies.data.MovieContract;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +35,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Vector;
 
 public class ShowcaseFragment extends Fragment {
 
@@ -80,9 +84,42 @@ public class ShowcaseFragment extends Fragment {
     }
 
     public void updateMovies() {
-        FetchMovieTask movieTask = new FetchMovieTask();
-        movieTask.execute();
-//        Log.d(LOG_TAG, "updateMovies: execute FetchMovieTask");
+        if(((MainActivity)getActivity()).getSortBy() == MainActivity.SortBy.FAVORITE) {
+            loadFavoriteMovies();
+        } else {
+            FetchMovieTask movieTask = new FetchMovieTask();
+            movieTask.execute();
+//            Log.d(LOG_TAG, "updateMovies: execute FetchMovieTask");
+        }
+    }
+
+    private void loadFavoriteMovies() {
+        Cursor cursor = getContext().getContentResolver().query(
+                MovieContract.FavoritesEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        Movie[] results = new Movie[cursor.getCount()];
+        if (!cursor.moveToFirst()) {
+            Toast.makeText(getActivity(), "No favorite movies yet", Toast.LENGTH_SHORT).show();
+        } else {
+            int i = 0;
+            do {
+                results[i] = new Movie(
+                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoritesEntry.COLUMN_ID)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoritesEntry.COLUMN_TITLE)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoritesEntry.COLUMN_IMAGE_URL)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoritesEntry.COLUMN_VOTE)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoritesEntry.COLUMN_RELEASE_DATE)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.FavoritesEntry.COLUMN_OVERVIEW))
+                );
+                i++;
+            } while (cursor.moveToNext());
+        }
+        mMovieAdapter.update(results);
+        mGridView.setAdapter(mMovieAdapter);
     }
 
     public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
