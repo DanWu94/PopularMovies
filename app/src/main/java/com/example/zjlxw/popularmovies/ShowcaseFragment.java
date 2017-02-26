@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.zjlxw.popularmovies.data.MovieContract;
@@ -43,6 +44,47 @@ public class ShowcaseFragment extends Fragment {
 
     private GridView mGridView;
     private MovieAdapter mMovieAdapter;
+
+    private Spinner spinner;
+    public enum SortBy {
+        MOST_POPULAR,
+        TOP_RATED,
+        FAVORITE
+    }
+    private SortBy sortBy = SortBy.TOP_RATED;
+
+    public void addListenerOnSpinnerItemSelection(View rootView) {
+        spinner = (Spinner) rootView.findViewById(R.id.sort_by);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SortBy tempSortBy;
+                switch (position) {
+                    case 0:
+                        tempSortBy = SortBy.MOST_POPULAR;
+                        break;
+                    case 1:
+                        tempSortBy = SortBy.TOP_RATED;
+                        break;
+                    case 2:
+                        tempSortBy = SortBy.FAVORITE;
+                        break;
+                    default:
+                        tempSortBy = SortBy.MOST_POPULAR;
+                        break;
+                }
+                if (tempSortBy != sortBy){
+                    sortBy = tempSortBy;
+                    updateMovies();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
 
     @Nullable
     @Override
@@ -74,6 +116,7 @@ public class ShowcaseFragment extends Fragment {
                 });
             }
         });
+        addListenerOnSpinnerItemSelection(rootView);
         return rootView;
     }
 
@@ -84,7 +127,7 @@ public class ShowcaseFragment extends Fragment {
     }
 
     public void updateMovies() {
-        if(((MainActivity)getActivity()).getSortBy() == MainActivity.SortBy.FAVORITE) {
+        if(sortBy == SortBy.FAVORITE) {
             loadFavoriteMovies();
         } else {
             FetchMovieTask movieTask = new FetchMovieTask();
@@ -160,7 +203,7 @@ public class ShowcaseFragment extends Fragment {
                 try {
 //                    Log.d(LOG_TAG, "doInBackground: sortby = "+((MainActivity)getActivity()).getSortBy());
                     String MOVIE_BASE_URL;
-                    switch (((MainActivity)getActivity()).getSortBy()) {
+                    switch (sortBy) {
                         case MOST_POPULAR:
                             MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
                             break;

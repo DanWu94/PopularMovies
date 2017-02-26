@@ -18,16 +18,8 @@ import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Spinner spinner;
-    public enum SortBy {
-        MOST_POPULAR,
-        TOP_RATED,
-        FAVORITE
-    }
-    private SortBy sortBy = SortBy.TOP_RATED;
-    public SortBy getSortBy() {
-        return sortBy;
-    }
+
+
     private ShowcaseFragment fragment;
 
     @Override
@@ -37,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        addListenerOnSpinnerItemSelection();
-
         if (savedInstanceState == null) {
             fragment = new ShowcaseFragment();
             getSupportFragmentManager().beginTransaction()
@@ -47,40 +37,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void addListenerOnSpinnerItemSelection() {
-        spinner = (Spinner) findViewById(R.id.sort_by);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                SortBy tempSortBy;
-                switch (position) {
-                    case 0:
-                        tempSortBy = SortBy.MOST_POPULAR;
-                        break;
-                    case 1:
-                        tempSortBy = SortBy.TOP_RATED;
-                        break;
-                    case 2:
-                        tempSortBy = SortBy.FAVORITE;
-                        break;
-                    default:
-                        tempSortBy = SortBy.MOST_POPULAR;
-                        break;
-                }
-                if (tempSortBy != sortBy){
-                    sortBy = tempSortBy;
-                    if(fragment != null) {
-                        fragment.updateMovies();
-                    }
-                }
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
