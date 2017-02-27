@@ -24,11 +24,8 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             mTwoPane = false;
-            getSupportActionBar().setElevation(0f);
+//            getSupportActionBar().setElevation(0f);
         }
-
-        ShowcaseFragment forecastFragment =  ((ShowcaseFragment)getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_showcase));
 
     }
 
