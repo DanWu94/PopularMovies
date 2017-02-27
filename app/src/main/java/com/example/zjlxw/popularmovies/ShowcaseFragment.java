@@ -53,7 +53,7 @@ public class ShowcaseFragment extends Fragment {
         TOP_RATED,
         FAVORITE
     }
-    private SortBy sortBy = SortBy.TOP_RATED;
+    private SortBy sortBy = SortBy.MOST_POPULAR;
 
     public void setSpinner() {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(true);
@@ -63,25 +63,22 @@ public class ShowcaseFragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                SortBy tempSortBy;
                 switch (position) {
                     case 0:
-                        tempSortBy = SortBy.MOST_POPULAR;
+                        sortBy = SortBy.MOST_POPULAR;
                         break;
                     case 1:
-                        tempSortBy = SortBy.TOP_RATED;
+                        sortBy = SortBy.TOP_RATED;
                         break;
                     case 2:
-                        tempSortBy = SortBy.FAVORITE;
+                        sortBy = SortBy.FAVORITE;
                         break;
                     default:
-                        tempSortBy = SortBy.MOST_POPULAR;
+                        sortBy = SortBy.MOST_POPULAR;
                         break;
                 }
-                if (tempSortBy != sortBy){
-                    sortBy = tempSortBy;
-                    updateMovies();
-                }
+
+                updateMovies();
             }
 
             @Override
@@ -125,10 +122,12 @@ public class ShowcaseFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        updateMovies();
+        Log.d(LOG_TAG, "onStart: called sortby " + sortBy);
+//        updateMovies();
     }
 
     public void updateMovies() {
+        Log.d(LOG_TAG, "updateMovies: called sortby " + sortBy);
         if(sortBy == SortBy.FAVORITE) {
             loadFavoriteMovies();
         } else {
@@ -139,6 +138,7 @@ public class ShowcaseFragment extends Fragment {
     }
 
     private void loadFavoriteMovies() {
+        Log.d(LOG_TAG, "loadFavoriteMovies: called");
         Cursor cursor = getContext().getContentResolver().query(
                 MovieContract.FavoritesEntry.CONTENT_URI,
                 null,
@@ -162,7 +162,9 @@ public class ShowcaseFragment extends Fragment {
                 );
                 i++;
             } while (cursor.moveToNext());
+            Log.d(LOG_TAG, "loadFavoriteMovies: " + i + " sortby " + sortBy);
         }
+        cursor.close();
         mMovieAdapter.update(results);
         mGridView.setAdapter(mMovieAdapter);
     }

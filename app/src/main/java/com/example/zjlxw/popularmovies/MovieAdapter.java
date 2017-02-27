@@ -55,12 +55,15 @@ public class MovieAdapter extends BaseAdapter {
         } else {
             imageView = (ImageView) convertView;
         }
-        Picasso.with(mContext)
-                .load(mMovieList.get(position).getImageUrl())
-                .placeholder(R.drawable.placeholder)
-                .error(R.drawable.placeholder_error)
-                .resize(parent.getWidth()/((GridView)parent).getNumColumns(),0)
-                .into(imageView);
+
+        if (parent.getWidth() != 0) {
+            Picasso.with(mContext)
+                    .load(mMovieList.get(position).getImageUrl())
+                    .placeholder(R.drawable.placeholder)
+                    .error(R.drawable.placeholder_error)
+                    .resize(parent.getWidth() / ((GridView) parent).getNumColumns(), 0)
+                    .into(imageView);
+        }
         return imageView;
     }
 
