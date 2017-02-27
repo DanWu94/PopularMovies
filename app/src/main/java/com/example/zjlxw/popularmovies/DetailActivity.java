@@ -29,10 +29,9 @@ public class DetailActivity extends AppCompatActivity {
             DetailFragment fragment = new DetailFragment();
             fragment.setArguments(arguments);
 
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.container, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, fragment)
+                    .commit();
         }
     }
 }
