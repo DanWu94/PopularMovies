@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +23,12 @@ public class MainActivity extends AppCompatActivity implements ShowcaseFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ShowcaseFragment showcaseFragment = (ShowcaseFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_showcase);
+        showcaseFragment.setSpinner();
+
         if (findViewById(R.id.movie_detail_container) != null) {
             mTwoPane = true;
             if (savedInstanceState == null) {
@@ -31,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements ShowcaseFragment.
             }
         } else {
             mTwoPane = false;
-//            getSupportActionBar().setElevation(0f);
         }
 
     }
@@ -62,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements ShowcaseFragment.
 
     @Override
     public void onMovieSelected(Movie movie) {
-        Log.d(LOG_TAG, "onMovieSelected: called");
+//        Log.d(LOG_TAG, "onMovieSelected: called");
         if (mTwoPane) {
             Bundle arguments = new Bundle();
             arguments.putParcelable(DetailFragment.DETAIL_URI, movie);

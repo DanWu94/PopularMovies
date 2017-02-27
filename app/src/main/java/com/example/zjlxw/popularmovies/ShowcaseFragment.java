@@ -55,8 +55,12 @@ public class ShowcaseFragment extends Fragment {
     }
     private SortBy sortBy = SortBy.TOP_RATED;
 
-    public void addListenerOnSpinnerItemSelection(View rootView) {
-        spinner = (Spinner) rootView.findViewById(R.id.sort_by);
+    public void setSpinner() {
+//        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(true);
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View spinnerView = inflater.inflate(R.layout.spinner, null);
+        spinner = (Spinner) spinnerView.findViewById(R.id.sort_by);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -86,6 +90,7 @@ public class ShowcaseFragment extends Fragment {
 
             }
         });
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setCustomView(spinnerView);
     }
 
     public interface Callback {
@@ -98,8 +103,6 @@ public class ShowcaseFragment extends Fragment {
         Movie[] defaultMovies = {new Movie("0", "Oops...There's something wrong with your Internet connection.", "http://i.imgur.com/DvpvklR.png", "0", "1970-1-1", "A little tip: check your WIFI or cellular data.")};
         mMovieAdapter = new MovieAdapter(getActivity(), defaultMovies);
         View rootView = inflater.inflate(R.layout.fragment_showcase, container, false);
-        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
         mGridView = (GridView)rootView.findViewById(R.id.showcase_gridview);
         mGridView.post(new Runnable() {
@@ -116,7 +119,7 @@ public class ShowcaseFragment extends Fragment {
                 });
             }
         });
-        addListenerOnSpinnerItemSelection(rootView);
+
         return rootView;
     }
 
