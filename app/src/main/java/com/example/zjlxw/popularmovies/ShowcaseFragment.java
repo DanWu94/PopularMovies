@@ -15,6 +15,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,6 +94,9 @@ public class ShowcaseFragment extends Fragment {
         Movie[] defaultMovies = {new Movie("0", "Oops...There's something wrong with your Internet connection.", "http://i.imgur.com/DvpvklR.png", "0", "1970-1-1", "A little tip: check your WIFI or cellular data.")};
         mMovieAdapter = new MovieAdapter(getActivity(), defaultMovies);
         View rootView = inflater.inflate(R.layout.fragment_showcase, container, false);
+        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+
         mGridView = (GridView)rootView.findViewById(R.id.showcase_gridview);
         mGridView.post(new Runnable() {
             @Override
