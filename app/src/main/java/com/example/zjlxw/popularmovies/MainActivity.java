@@ -31,11 +31,11 @@ public class MainActivity extends AppCompatActivity implements ShowcaseFragment.
 
         if (findViewById(R.id.movie_detail_container) != null) {
             mTwoPane = true;
-            if (savedInstanceState == null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.movie_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
-                        .commit();
-            }
+//            if (savedInstanceState == null) {
+//                getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.movie_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
+//                        .commit();
+//            }
         } else {
             mTwoPane = false;
         }

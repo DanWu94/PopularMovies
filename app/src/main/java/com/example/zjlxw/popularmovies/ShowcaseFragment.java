@@ -56,7 +56,6 @@ public class ShowcaseFragment extends Fragment {
     private SortBy sortBy = SortBy.TOP_RATED;
 
     public void setSpinner() {
-//        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(true);
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View spinnerView = inflater.inflate(R.layout.spinner, null);
