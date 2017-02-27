@@ -88,6 +88,10 @@ public class ShowcaseFragment extends Fragment {
         });
     }
 
+    public interface Callback {
+        public void onMovieSelected(Movie movie);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -107,16 +111,7 @@ public class ShowcaseFragment extends Fragment {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Movie movie = mMovieAdapter.getItem(position);
-                        Intent intent = new Intent(getActivity(), DetailActivity.class)
-                                .putExtra("movie", movie);
-                        PendingIntent pendingIntent =
-                                TaskStackBuilder.create(getActivity())
-                                        .addNextIntentWithParentStack(getActivity().getIntent())
-                                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity());
-                        builder.setContentIntent(pendingIntent);
-                        startActivity(intent);
+                        ((Callback)getActivity()).onMovieSelected(movie);
                     }
                 });
             }

@@ -64,6 +64,10 @@ public class DetailFragment extends Fragment {
 
     String[] mSelectionArgs = {""};
 
+    static final String DETAIL_URI = "movie_detail";
+
+    private Movie movie;
+
     public DetailFragment() {
     }
 
@@ -72,14 +76,13 @@ public class DetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        Intent intent = getActivity().getIntent();
-        if (intent != null && intent.hasExtra("movie")) {
-            Bundle data = intent.getExtras();
-            final Movie movie = data.getParcelable("movie");
+        Bundle arguments = getArguments();
+        if (arguments!= null) {
+            movie = arguments.getParcelable(DETAIL_URI);
             mId = movie.getId();
-            ((TextView)rootView.findViewById(R.id.text_title))
+            ((TextView) rootView.findViewById(R.id.text_title))
                     .setText(movie.getTitle());
-            final ImageView imageView = (ImageView)rootView.findViewById(R.id.image_poster);
+            final ImageView imageView = (ImageView) rootView.findViewById(R.id.image_poster);
             imageView.post(new Runnable() {
                 @Override
                 public void run() {
@@ -88,18 +91,18 @@ public class DetailFragment extends Fragment {
                             .load(movie.getImageUrl())
                             .placeholder(R.drawable.placeholder)
                             .error(R.drawable.placeholder_error)
-                            .resize(((View)imageView.getParent()).getMeasuredWidth(),0)
+                            .resize(((View) imageView.getParent()).getMeasuredWidth(), 0)
                             .into(imageView);
                 }
             });
-            ((TextView)rootView.findViewById(R.id.text_vote))
-                    .setText(movie.getVote()+"/10");
-            ((TextView)rootView.findViewById(R.id.text_release_date))
+            ((TextView) rootView.findViewById(R.id.text_vote))
+                    .setText(movie.getVote() + "/10");
+            ((TextView) rootView.findViewById(R.id.text_release_date))
                     .setText(movie.getReleaseDate());
-            ((TextView)rootView.findViewById(R.id.text_overview))
+            ((TextView) rootView.findViewById(R.id.text_overview))
                     .setText(movie.getOverview());
 
-            mFavoriteSwitch = (Switch)rootView.findViewById(R.id.switch_favorite);
+            mFavoriteSwitch = (Switch) rootView.findViewById(R.id.switch_favorite);
             mSelectionArgs[0] = mId;
             Cursor cursor = getContext().getContentResolver().query(
                     MovieContract.FavoritesEntry.CONTENT_URI,
@@ -142,7 +145,7 @@ public class DetailFragment extends Fragment {
                 }
             });
 
-            mTrailerList = (ListView)rootView.findViewById(R.id.list_trailers);
+            mTrailerList = (ListView) rootView.findViewById(R.id.list_trailers);
             mTrailerAdapter = new ArrayAdapter<String>(getActivity(), R.layout.item_trailer) {
                 @NonNull
                 @Override
@@ -152,7 +155,7 @@ public class DetailFragment extends Fragment {
                                 .inflate(R.layout.item_trailer, parent, false);
                     }
                     Button buttonTrailer = (Button) convertView.findViewById(R.id.button_trailer);
-                    buttonTrailer.setText("Trailer " + (position+1));
+                    buttonTrailer.setText("Trailer " + (position + 1));
                     buttonTrailer.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -165,7 +168,7 @@ public class DetailFragment extends Fragment {
             mTrailerList.setAdapter(mTrailerAdapter);
             getTrailerKeys();
 
-            mReviewList = (ListView)rootView.findViewById(R.id.list_reviews);
+            mReviewList = (ListView) rootView.findViewById(R.id.list_reviews);
             mReviewAdapter = new ArrayAdapter<Review>(getActivity(), R.layout.item_review) {
                 @NonNull
                 @Override
@@ -174,9 +177,9 @@ public class DetailFragment extends Fragment {
                         convertView = LayoutInflater.from(getContext())
                                 .inflate(R.layout.item_review, parent, false);
                     }
-                    TextView tvAuthor = (TextView)convertView.findViewById(R.id.tvAuthor);
+                    TextView tvAuthor = (TextView) convertView.findViewById(R.id.tvAuthor);
                     tvAuthor.setText("Review By: " + getItem(position).author);
-                    TextView tvContent = (TextView)convertView.findViewById(R.id.tvContent);
+                    TextView tvContent = (TextView) convertView.findViewById(R.id.tvContent);
                     tvContent.setText(getItem(position).content);
 
                     return convertView;
@@ -188,6 +191,7 @@ public class DetailFragment extends Fragment {
             ScrollView scrollView = (ScrollView) rootView.findViewById(R.id.scroll_group);
             scrollView.smoothScrollTo(0, 0);
         }
+
         return rootView;
     }
 
