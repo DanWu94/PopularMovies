@@ -46,14 +46,18 @@ public class ShowcaseFragment extends Fragment {
 
     private GridView mGridView;
     private MovieAdapter mMovieAdapter;
+    private int prevGridPos = 0;
+
+    private final String GRID_POS = "grid_pos";
 
     private Spinner spinner;
     public enum SortBy {
         MOST_POPULAR,
         TOP_RATED,
-        FAVORITE
+        FAVORITE,
+        IDLE
     }
-    private SortBy sortBy = SortBy.MOST_POPULAR;
+    private SortBy sortBy = SortBy.IDLE;
 
     public void setSpinner() {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(true);
@@ -63,22 +67,30 @@ public class ShowcaseFragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SortBy tempSortBy;
                 switch (position) {
                     case 0:
-                        sortBy = SortBy.MOST_POPULAR;
+                        tempSortBy = SortBy.MOST_POPULAR;
                         break;
                     case 1:
-                        sortBy = SortBy.TOP_RATED;
+                        tempSortBy = SortBy.TOP_RATED;
                         break;
                     case 2:
-                        sortBy = SortBy.FAVORITE;
+                        tempSortBy = SortBy.FAVORITE;
                         break;
                     default:
-                        sortBy = SortBy.MOST_POPULAR;
+                        tempSortBy = SortBy.IDLE;
                         break;
                 }
 
-                updateMovies();
+                if (tempSortBy != sortBy) {
+                    if (sortBy != SortBy.IDLE) {
+                        prevGridPos = 0;
+                    }
+                    sortBy = tempSortBy;
+                    updateMovies();
+
+                }
             }
 
             @Override
@@ -96,6 +108,7 @@ public class ShowcaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "onCreateView: called");
         Movie[] defaultMovies = {new Movie("0", "Oops...There's something wrong with your Internet connection.", "http://i.imgur.com/DvpvklR.png", "0", "1970-1-1", "A little tip: check your WIFI or cellular data.")};
         mMovieAdapter = new MovieAdapter(getActivity(), defaultMovies);
         View rootView = inflater.inflate(R.layout.fragment_showcase, container, false);
@@ -120,25 +133,41 @@ public class ShowcaseFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(GRID_POS, mGridView.getFirstVisiblePosition());
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            prevGridPos = savedInstanceState.getInt(GRID_POS);
+            Log.d(LOG_TAG, "onActivityCreated: " + prevGridPos);
+        }
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
-        Log.d(LOG_TAG, "onStart: called sortby " + sortBy);
-//        updateMovies();
     }
 
     public void updateMovies() {
-        Log.d(LOG_TAG, "updateMovies: called sortby " + sortBy);
         if(sortBy == SortBy.FAVORITE) {
             loadFavoriteMovies();
         } else {
             FetchMovieTask movieTask = new FetchMovieTask();
             movieTask.execute();
-//            Log.d(LOG_TAG, "updateMovies: execute FetchMovieTask");
         }
     }
 
+    private void updateGridView(Movie [] movies) {
+        mMovieAdapter.update(movies);
+        mGridView.setAdapter(mMovieAdapter);
+        mGridView.smoothScrollToPosition(prevGridPos);
+    }
+
     private void loadFavoriteMovies() {
-        Log.d(LOG_TAG, "loadFavoriteMovies: called");
         Cursor cursor = getContext().getContentResolver().query(
                 MovieContract.FavoritesEntry.CONTENT_URI,
                 null,
@@ -162,11 +191,9 @@ public class ShowcaseFragment extends Fragment {
                 );
                 i++;
             } while (cursor.moveToNext());
-            Log.d(LOG_TAG, "loadFavoriteMovies: " + i + " sortby " + sortBy);
         }
         cursor.close();
-        mMovieAdapter.update(results);
-        mGridView.setAdapter(mMovieAdapter);
+        updateGridView(results);
     }
 
     public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
@@ -187,9 +214,6 @@ public class ShowcaseFragment extends Fragment {
                         movieObject.getString("vote_average"),
                         movieObject.getString("release_date"),
                         movieObject.getString("overview"));
-//                Log.d(LOG_TAG, "getMovieDataFromJson:"
-//                        +" title: "+results[i].getTitle()
-//                        +" imageUrl: "+results[i].getImageUrl());
             }
             return results;
         }
@@ -205,7 +229,6 @@ public class ShowcaseFragment extends Fragment {
             String movieJsonStr = null;
             if (Utility.isOnline(getActivity())) {
                 try {
-//                    Log.d(LOG_TAG, "doInBackground: sortby = "+((MainActivity)getActivity()).getSortBy());
                     String MOVIE_BASE_URL;
                     switch (sortBy) {
                         case MOST_POPULAR:
@@ -243,7 +266,6 @@ public class ShowcaseFragment extends Fragment {
                         buffer.append(line);
                         buffer.append("\n");
                     }
-//                    Log.d(LOG_TAG, "JSON: \n" + buffer);
 
                     if (buffer.length() == 0) {
                         // Stream was empty.  No point in parsing.
@@ -280,9 +302,7 @@ public class ShowcaseFragment extends Fragment {
         @Override
         protected void onPostExecute(Movie[] results) {
             if (results != null) {
-                mMovieAdapter.update(results);
-//                Log.d(LOG_TAG, "onPostExecute: adapter updated");
-                mGridView.setAdapter(mMovieAdapter);
+                updateGridView(results);
             }
         }
     }
