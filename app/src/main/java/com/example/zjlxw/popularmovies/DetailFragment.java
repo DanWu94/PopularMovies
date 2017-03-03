@@ -2,11 +2,8 @@ package com.example.zjlxw.popularmovies;
 
 import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -20,7 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Switch;
@@ -39,7 +35,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -86,7 +81,6 @@ public class DetailFragment extends Fragment {
             imageView.post(new Runnable() {
                 @Override
                 public void run() {
-//                    Log.d(LOG_TAG, "run: "+((View)imageView.getParent()).getMeasuredWidth());
                     Picasso.with(getActivity())
                             .load(movie.getImageUrl())
                             .placeholder(R.drawable.placeholder)
@@ -141,6 +135,8 @@ public class DetailFragment extends Fragment {
                                 mSelectionClause,
                                 mSelectionArgs
                         );
+                        getActivity().setResult(Activity.RESULT_OK);
+                        getActivity().finish();
                     }
                 }
             });
@@ -254,7 +250,6 @@ public class DetailFragment extends Fragment {
                         buffer.append(line);
                         buffer.append("\n");
                     }
-//                    Log.d(LOG_TAG, "JSON: \n" + buffer);
 
                     if (buffer.length() == 0) {
                         return null;
@@ -290,7 +285,6 @@ public class DetailFragment extends Fragment {
         @Override
         protected void onPostExecute(String[] result) {
             if (result != null) {
-//                Log.d(LOG_TAG, "onPostExecute: store trailer keys");
                 mTrailerAdapter.clear();
                 mTrailerAdapter.addAll(result);
                 Utility.setListViewHeightBasedOnChildren(mTrailerList);
@@ -310,7 +304,6 @@ public class DetailFragment extends Fragment {
             for (int i = 0; i < trailer_num; i++) {
                 JSONObject movieObject = movieArray.getJSONObject(i);
                 reviews[i] = new Review(movieObject.getString("author"), movieObject.getString("content"));
-//                Log.d(LOG_TAG, "getTrailerFromJson: author: " + reviews[i].author);
             }
             return reviews;
         }
@@ -348,7 +341,6 @@ public class DetailFragment extends Fragment {
                         buffer.append(line);
                         buffer.append("\n");
                     }
-//                    Log.d(LOG_TAG, "JSON: \n" + buffer);
 
                     if (buffer.length() == 0) {
                         return null;
@@ -384,7 +376,6 @@ public class DetailFragment extends Fragment {
         @Override
         protected void onPostExecute(Review[] result) {
             if (result != null) {
-//                Log.d(LOG_TAG, "onPostExecute: store reviews");
                 mReviewAdapter.clear();
                 mReviewAdapter.addAll(result);
                 Utility.setListViewHeightBasedOnChildren(mReviewList);

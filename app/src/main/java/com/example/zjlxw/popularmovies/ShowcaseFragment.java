@@ -1,22 +1,13 @@
 package com.example.zjlxw.popularmovies;
 
-
-import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +29,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Vector;
 
 public class ShowcaseFragment extends Fragment {
 
@@ -147,11 +137,6 @@ public class ShowcaseFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
     public void updateMovies() {
         if(sortBy == SortBy.FAVORITE) {
             loadFavoriteMovies();
@@ -167,7 +152,7 @@ public class ShowcaseFragment extends Fragment {
         mGridView.smoothScrollToPosition(prevGridPos);
     }
 
-    private void loadFavoriteMovies() {
+    public void loadFavoriteMovies() {
         Cursor cursor = getContext().getContentResolver().query(
                 MovieContract.FavoritesEntry.CONTENT_URI,
                 null,

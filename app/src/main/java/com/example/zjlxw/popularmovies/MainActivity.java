@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements ShowcaseFragment.Callback {
 
@@ -17,6 +18,8 @@ public class MainActivity extends AppCompatActivity implements ShowcaseFragment.
 
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
     private boolean mTwoPane;
+
+    public static final int FAVORITE_DELETED = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +93,19 @@ public class MainActivity extends AppCompatActivity implements ShowcaseFragment.
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
             builder.setContentIntent(pendingIntent);
-            startActivity(intent);
+            startActivityForResult(intent, FAVORITE_DELETED);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == FAVORITE_DELETED) {
+            if (resultCode == RESULT_OK) {
+                ShowcaseFragment showcaseFragment = (ShowcaseFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_showcase);
+                showcaseFragment.loadFavoriteMovies();
+                Toast.makeText(this, "Movie deleted from Favorite", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
