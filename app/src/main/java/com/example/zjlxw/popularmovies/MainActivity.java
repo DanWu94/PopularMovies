@@ -7,10 +7,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements ShowcaseFragment.Callback {
 
@@ -20,6 +18,8 @@ public class MainActivity extends AppCompatActivity implements ShowcaseFragment.
     private boolean mTwoPane;
 
     public static final int FAVORITE_DELETED = 1;
+    public static final String MY_PREF = "MY_PREF";
+    public static final String TWO_PANE = "TWO_PANE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements ShowcaseFragment.
             mTwoPane = false;
         }
 
+        getSharedPreferences(MY_PREF, MODE_PRIVATE).edit().putBoolean(TWO_PANE, mTwoPane).apply();
     }
 
 
@@ -102,10 +103,15 @@ public class MainActivity extends AppCompatActivity implements ShowcaseFragment.
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == FAVORITE_DELETED) {
             if (resultCode == RESULT_OK) {
-                ShowcaseFragment showcaseFragment = (ShowcaseFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_showcase);
-                showcaseFragment.loadFavoriteMovies();
-                Toast.makeText(this, "Movie deleted from Favorite", Toast.LENGTH_SHORT).show();
+                reloadFavorite();
             }
+        }
+    }
+
+    public void reloadFavorite() {
+        ShowcaseFragment showcaseFragment = (ShowcaseFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_showcase);
+        if (showcaseFragment.sortBy == ShowcaseFragment.SortBy.FAVORITE) {
+            showcaseFragment.loadFavoriteMovies();
         }
     }
 }

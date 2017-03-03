@@ -2,6 +2,7 @@ package com.example.zjlxw.popularmovies;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -21,6 +22,7 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.zjlxw.popularmovies.data.MovieContract;
 import com.squareup.picasso.Picasso;
@@ -63,12 +65,16 @@ public class DetailFragment extends Fragment {
 
     private Movie movie;
 
+    private boolean mTwoPane;
+
     public DetailFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mTwoPane = getActivity().getSharedPreferences(MainActivity.MY_PREF, Context.MODE_PRIVATE).getBoolean(MainActivity.TWO_PANE, false);
+
         final View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         Bundle arguments = getArguments();
@@ -128,6 +134,11 @@ public class DetailFragment extends Fragment {
                                 MovieContract.FavoritesEntry.CONTENT_URI,
                                 values
                         );
+
+                        if (mTwoPane) {
+                            ((MainActivity) getActivity()).reloadFavorite();
+                        }
+                        Toast.makeText(getActivity(), "Movie added to Favorite", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.d(LOG_TAG, "onCheckedChanged: delete");
                         getContext().getContentResolver().delete(
@@ -135,8 +146,14 @@ public class DetailFragment extends Fragment {
                                 mSelectionClause,
                                 mSelectionArgs
                         );
-                        getActivity().setResult(Activity.RESULT_OK);
-                        getActivity().finish();
+
+                        if (mTwoPane) {
+                            ((MainActivity)getActivity()).reloadFavorite();
+                        } else {
+                            getActivity().setResult(Activity.RESULT_OK);
+                        }
+
+                        Toast.makeText(getActivity(), "Movie deleted from Favorite", Toast.LENGTH_SHORT).show();
                     }
                 }
             });

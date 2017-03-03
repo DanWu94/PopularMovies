@@ -47,7 +47,7 @@ public class ShowcaseFragment extends Fragment {
         FAVORITE,
         IDLE
     }
-    private SortBy sortBy = SortBy.IDLE;
+    public SortBy sortBy = SortBy.IDLE;
 
     public void setSpinner() {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(true);
