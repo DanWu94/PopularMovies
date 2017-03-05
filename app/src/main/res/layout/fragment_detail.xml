@@ -22,7 +22,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/detail_title_size"
-                android:textColor="@color/detailTitleText"/>
+                android:textColor="@color/detailTitleText"
+                tools:text="Title Here"/>
 
             <LinearLayout
                 android:id="@+id/poster_and_other"
@@ -53,14 +54,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/detail_content_padding"
-                        android:textSize="@dimen/detail_release_date_size"/>
+                        android:textSize="@dimen/detail_release_date_size"
+                        tools:text="1970-01-01"/>
 
                     <TextView
                         android:id="@+id/text_vote"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/detail_content_padding"
-                        android:textSize="@dimen/detail_vote_size"/>
+                        android:textSize="@dimen/detail_vote_size"
+                        tools:text="6.5/10"/>
 
                     <Switch
                         android:text="Favorite"
@@ -76,17 +79,20 @@
                 android:id="@+id/text_overview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/detail_content_padding"/>
+                android:padding="@dimen/detail_content_padding"
+                tools:text="Overview: blah blah blah"/>
 
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/list_trailers" />
+                android:id="@+id/list_trailers"
+                tools:listitem="@layout/item_trailer"/>
 
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/list_reviews"/>
+                android:id="@+id/list_reviews"
+                tools:listitem="@layout/item_review"/>
 
         </LinearLayout>
 
