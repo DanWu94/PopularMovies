@@ -2,8 +2,6 @@ package com.example.zjlxw.popularmovies;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,17 +18,6 @@ import android.widget.Toast;
 import com.example.zjlxw.popularmovies.data.MovieContract;
 import com.example.zjlxw.popularmovies.network.AsyncTaskCompleteListener;
 import com.example.zjlxw.popularmovies.network.FetchMovieTask;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class ShowcaseFragment extends Fragment {
 
@@ -142,8 +129,10 @@ public class ShowcaseFragment extends Fragment {
     public void updateMovies() {
         if(sortBy == SortBy.FAVORITE) {
             loadFavoriteMovies();
-        } else {
+        } else if (Utility.isOnline(getActivity())) {
             new FetchMovieTask(getActivity(), sortBy, new FetchMovieTaskCompleteListener()).execute();
+        } else {
+            Toast.makeText(getActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show();
         }
     }
 

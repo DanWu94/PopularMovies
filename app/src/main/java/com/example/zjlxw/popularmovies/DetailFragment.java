@@ -25,6 +25,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.zjlxw.popularmovies.data.MovieContract;
+import com.example.zjlxw.popularmovies.network.AsyncTaskCompleteListener;
+import com.example.zjlxw.popularmovies.network.FetchReviewTask;
+import com.example.zjlxw.popularmovies.network.FetchTrailerTask;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -209,98 +212,16 @@ public class DetailFragment extends Fragment {
     }
 
     private void getTrailerKeys() {
-        FetchTrailerTask fetchTrailerTask = new FetchTrailerTask();
-        fetchTrailerTask.execute();
+        new FetchTrailerTask(getActivity(), mId, new FetchTrailerTaskCompleteListener()).execute();
     }
 
     private void getReviews() {
-        FetchReviewTask fetchReviewTask = new FetchReviewTask();
-        fetchReviewTask.execute();
+        new FetchReviewTask(getActivity(), mId, new FetchReviewTaskCompleteListener()).execute();
     }
 
-    public class FetchTrailerTask extends AsyncTask<String, Void, String[]> {
-        private final String LOG_TAG = FetchTrailerTask.class.getSimpleName();
-
-        private String[] getTrailerFromJson(String movieJsonStr)
-                throws JSONException {
-            JSONObject movieJson = new JSONObject(movieJsonStr);
-            JSONArray movieArray = movieJson.getJSONArray("results");
-            int trailer_num = movieArray.length();
-            String[] keys = new String[trailer_num];
-            for (int i = 0; i < trailer_num; i++) {
-                JSONObject movieObject = movieArray.getJSONObject(i);
-                keys[i] = movieObject.getString("key");
-            }
-            return keys;
-        }
-
+    public class FetchTrailerTaskCompleteListener implements AsyncTaskCompleteListener<String []> {
         @Override
-        protected String[] doInBackground(String... params) {
-
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            String movieJsonStr = null;
-            if (Utility.isOnline(getActivity())) {
-                try {
-                    String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/" + mId + "/videos";
-                    final String API_KEY = "api_key";
-                    Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                            .appendQueryParameter(API_KEY, BuildConfig.MOVIEDB_API_KEY)
-                            .build();
-
-                    URL url = new URL(builtUri.toString());
-
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("GET");
-                    urlConnection.connect();
-
-                    InputStream inputStream = urlConnection.getInputStream();
-                    StringBuilder buffer = new StringBuilder();
-                    if (inputStream == null) {
-                        return null;
-                    }
-                    reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        buffer.append(line);
-                        buffer.append("\n");
-                    }
-
-                    if (buffer.length() == 0) {
-                        return null;
-                    }
-
-                    movieJsonStr = buffer.toString();
-
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "IO Error: ", e);
-                } finally {
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                    }
-                    if (reader != null) {
-                        try {
-                            reader.close();
-                        } catch (final IOException e) {
-                            Log.e(LOG_TAG, "Error closing stream: ", e);
-                        }
-                    }
-                }
-
-                try {
-                    return getTrailerFromJson(movieJsonStr);
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.getMessage(), e);
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String[] result) {
+        public void onTaskComplete(String[] result) {
             if (result != null) {
                 mTrailerAdapter.clear();
                 mTrailerAdapter.addAll(result);
@@ -309,89 +230,9 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    public class FetchReviewTask extends AsyncTask<String, Void, Review[]> {
-        private final String LOG_TAG = FetchReviewTask.class.getSimpleName();
-
-        private Review[] getTrailerFromJson(String movieJsonStr)
-                throws JSONException {
-            JSONObject movieJson = new JSONObject(movieJsonStr);
-            JSONArray movieArray = movieJson.getJSONArray("results");
-            int trailer_num = movieArray.length();
-            Review[] reviews = new Review[trailer_num];
-            for (int i = 0; i < trailer_num; i++) {
-                JSONObject movieObject = movieArray.getJSONObject(i);
-                reviews[i] = new Review(movieObject.getString("author"), movieObject.getString("content"));
-            }
-            return reviews;
-        }
-
+    public class FetchReviewTaskCompleteListener implements AsyncTaskCompleteListener<Review []> {
         @Override
-        protected Review[] doInBackground(String... params) {
-
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            String movieJsonStr = null;
-            if (Utility.isOnline(getActivity())) {
-                try {
-                    String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/" + mId + "/reviews";
-                    final String API_KEY = "api_key";
-                    Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                            .appendQueryParameter(API_KEY, BuildConfig.MOVIEDB_API_KEY)
-                            .build();
-
-                    URL url = new URL(builtUri.toString());
-
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("GET");
-                    urlConnection.connect();
-
-                    InputStream inputStream = urlConnection.getInputStream();
-                    StringBuilder buffer = new StringBuilder();
-                    if (inputStream == null) {
-                        return null;
-                    }
-                    reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        buffer.append(line);
-                        buffer.append("\n");
-                    }
-
-                    if (buffer.length() == 0) {
-                        return null;
-                    }
-
-                    movieJsonStr = buffer.toString();
-
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "IO Error: ", e);
-                } finally {
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                    }
-                    if (reader != null) {
-                        try {
-                            reader.close();
-                        } catch (final IOException e) {
-                            Log.e(LOG_TAG, "Error closing stream: ", e);
-                        }
-                    }
-                }
-
-                try {
-                    return getTrailerFromJson(movieJsonStr);
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.getMessage(), e);
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Review[] result) {
+        public void onTaskComplete(Review[] result) {
             if (result != null) {
                 mReviewAdapter.clear();
                 mReviewAdapter.addAll(result);
