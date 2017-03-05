@@ -175,7 +175,10 @@ public class DetailFragment extends Fragment {
                     buttonTrailer.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + getItem(position))));
+                            Intent sendIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + getItem(position)));
+                            if (sendIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                startActivity(sendIntent);
+                            }
                         }
                     });
                     return convertView;
