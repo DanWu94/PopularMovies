@@ -21,17 +21,22 @@ public class DetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if (savedInstanceState == null) {
-            Movie movie = getIntent().getExtras().getParcelable("movie");
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                if (extras.containsKey("movie")) {
+                    Movie movie = extras.getParcelable("movie");
 
-            Bundle arguments = new Bundle();
-            arguments.putParcelable(DetailFragment.DETAIL_URI, movie);
+                    Bundle arguments = new Bundle();
+                    arguments.putParcelable(DetailFragment.DETAIL_URI, movie);
 
-            DetailFragment fragment = new DetailFragment();
-            fragment.setArguments(arguments);
+                    DetailFragment fragment = new DetailFragment();
+                    fragment.setArguments(arguments);
 
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, fragment)
-                    .commit();
+                    getSupportFragmentManager().beginTransaction()
+                            .add(R.id.container, fragment)
+                            .commit();
+                }
+            }
         }
     }
 }
